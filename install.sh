@@ -4,7 +4,7 @@ set -euo pipefail
 SKILL_DIR="${HOME}/.claude/skills/urls-bid"
 SCRIPTS_DIR="${SKILL_DIR}/scripts"
 BIN_DIR="${SKILL_DIR}/bin"
-REPO_BASE="https://urls.bid/skills/urls-bid"
+REPO_BASE="https://raw.githubusercontent.com/urlsdotbid/skill/main"
 JQ_VERSION="1.8.1"
 JQ_BASE_URL="https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}"
 
