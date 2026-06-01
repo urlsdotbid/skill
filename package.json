@@ -1,0 +1,21 @@
+{
+  "name": "@urlsdotbid/skill",
+  "version": "1.0.0",
+  "description": "urls.bid AI Agent Skill for Static Web Hosting, Bio Profiles, Gated Links and paywalled file uploads.",
+  "main": "SKILL.md",
+  "scripts": {
+    "publish": "./scripts/publish.sh",
+    "drive": "./scripts/drive.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/urlsdotbid/skill.git"
+  },
+  "keywords": ["agent", "skill", "web3", "x402", "micropayments", "hosting", "urls.bid"],
+  "author": "urls.bid support <support@urls.bid>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/urlsdotbid/skill/issues"
+  },
+  "homepage": "https://github.com/urlsdotbid/skill#readme"
+}
