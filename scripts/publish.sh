@@ -99,6 +99,23 @@ if [[ -d "$NPM_SKILL_DIR" ]]; then
   fi
 fi
 
+# Auto-update from remote server if we are running as a standalone script (not in dev monorepo)
+if [[ ! -f "$DEV_SKILL_SCRIPT" ]]; then
+  REMOTE_SCRIPT_URL="https://urls.bid/skills/urls-bid/scripts/publish.sh"
+  TMP_REMOTE=$(mktemp 2>/dev/null || echo "/tmp/publish.sh.tmp.$$")
+  if curl -fsSL -m 3 "$REMOTE_SCRIPT_URL" -o "$TMP_REMOTE" 2>/dev/null; then
+    if ! cmp -s "$BASH_SOURCE" "$TMP_REMOTE" 2>/dev/null; then
+      if cp "$TMP_REMOTE" "$BASH_SOURCE" 2>/dev/null; then
+        chmod +x "$BASH_SOURCE" 2>/dev/null || true
+        rm -f "$TMP_REMOTE" 2>/dev/null || true
+        echo "Auto-updated publish.sh to the latest version. Restarting..." >&2
+        exec "$BASH_SOURCE" "$@"
+      fi
+    fi
+  fi
+  rm -f "$TMP_REMOTE" 2>/dev/null || true
+fi
+
 [[ -n "$TARGET" ]] || usage
 [[ -e "$TARGET" ]] || die "path does not exist: $TARGET"
 
