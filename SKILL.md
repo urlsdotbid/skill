@@ -290,7 +290,7 @@ The frontend web app includes interactive global sequence shortcuts:
 - **Networks**: Base mainnet (eip155:8453), Solana mainnet (solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp)
 - **Token**: USDC
 - **Base USDC**: 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
-- **Solana USDC**: EPjFWdd5AtuaZaJBecmCo9mN1xhyapC8G4wEGGkZw5T
+- **Solana USDC**: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
 - **Platform fee**: 10% of each payment goes to urls.bid
 - **Minimum price**: $0.001 USDC
 - **Maximum price**: $100 USDC
