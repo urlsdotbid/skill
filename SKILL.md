@@ -30,8 +30,9 @@ trigger_phrases:
 
 ## Overview
 
-urls.bid lets you create short links, bio profiles, payment-gated content, and
-time-locked promo links — all on-chain via x402 micropayments on Base or Solana.
+urls.bid lets you create short links, bio profiles, payment-gated content,
+static websites, paywalled files, and time-locked promo links via the live
+OpenAPI/REST surface at `https://api.urls.bid/openapi.json`.
 
 ## Quick Start
 
@@ -63,54 +64,54 @@ urls.bid uses **X (Twitter) OAuth** for authentication. To authorize your agent:
 ## Core Workflows
 
 ### 1. Create a Short Link
-```
-POST https://api.urls.bid/rpc
+```http
+POST https://api.urls.bid/link/createLink
+Authorization: Bearer <YOUR_API_KEY>
 Content-Type: application/json
 
 {
-  "method": "link.createLink",
-  "params": {
-    "destinationUrl": "https://example.com/very-long-url",
-    "title": "My Link",
-    "isGated": false,
-    "acceptedChains": []
-  }
+  "destinationUrl": "https://example.com/very-long-url",
+  "title": "My Link",
+  "isGated": false,
+  "acceptedChains": []
 }
 ```
 
 Returns: `{ slug: "abc123", shortUrl: "https://urls.bid/abc123" }`
 
 ### 2. Create a Payment-Gated Link
-```
-POST https://api.urls.bid/rpc
+```http
+POST https://api.urls.bid/link/createLink
+Authorization: Bearer <YOUR_API_KEY>
+Content-Type: application/json
+
 {
-  "method": "link.createLink",
-  "params": {
-    "destinationUrl": "https://example.com/premium",
-    "title": "Premium Content",
-    "isGated": true,
-    "priceUsd": 1.00,
-    "payToAddress": "0xYourBaseWallet",
-    "payToSol": "3JypB...r5TGS",
-    "acceptedChains": ["base", "solana"]
-  }
+  "destinationUrl": "https://example.com/premium",
+  "title": "Premium Content",
+  "isGated": true,
+  "priceUsd": 1.00,
+  "payToAddress": "0xYourBaseWallet",
+  "payToSol": "3JypB...r5TGS",
+  "acceptedChains": ["base", "solana"]
 }
 ```
 
 ### 3. Create a Time-Locked Promo Link
-```
-POST https://api.urls.bid/rpc
+```http
+POST https://api.urls.bid/link/createPromoLink
+Authorization: Bearer <YOUR_API_KEY>
+Content-Type: application/json
+
 {
-  "method": "link.createPromoLink",
-  "params": {
-    "destinationUrl": "https://example.com/launch",
-    "title": "Product Launch",
-    "isGated": true,
-    "priceUsd": 0.01,
-    "maxPayments": 100,
-    "expiresAt": 1717200000000,
-    "acceptedChains": ["base", "solana"]
-  }
+  "destinationUrl": "https://example.com/launch",
+  "title": "Product Launch",
+  "isGated": true,
+  "priceUsd": 0.01,
+  "payToAddress": "0xYourBaseWallet",
+  "payToSol": "3JypB...r5TGS",
+  "acceptedChains": ["base", "solana"],
+  "maxPayments": 100,
+  "expiresAt": 1717200000000
 }
 ```
 
@@ -118,29 +119,32 @@ POST https://api.urls.bid/rpc
 - `expiresAt`: Unix timestamp in ms. Link auto-expires at deadline.
 
 ### 4. Create a Bio Profile
-```
-POST https://api.urls.bid/rpc
+```http
+POST https://api.urls.bid/bio/createBioProfile
+Authorization: Bearer <YOUR_API_KEY>
+Content-Type: application/json
+
 {
-  "method": "bio.createBioProfile",
-  "params": {
-    "username": "yourname",
-    "displayName": "Your Name",
-    "bio": "Building cool stuff",
-    "theme": "default"
-  }
+  "username": "yourname",
+  "displayName": "Your Name",
+  "bio": "Building cool stuff",
+  "theme": "default"
 }
 ```
 
-Then add links:
-```
-POST https://api.urls.bid/rpc
+Then add links. If you just created the profile in the same session, pass its
+`profileId`; otherwise the API can attach to the authenticated user's default
+profile.
+```http
+POST https://api.urls.bid/bio/addBioLink
+Authorization: Bearer <YOUR_API_KEY>
+Content-Type: application/json
+
 {
-  "method": "bio.addBioLink",
-  "params": {
-    "title": "My Website",
-    "url": "https://example.com",
-    "isGated": false
-  }
+  "profileId": "optional-profile-uuid",
+  "title": "My Website",
+  "url": "https://example.com",
+  "isGated": false
 }
 ```
 
@@ -272,7 +276,8 @@ Agent credentials are stored at `~/.urlsbid/credentials`. Priority:
 
 ## Client Attribution
 
-Include `X-Client: urlsbid/skill` header to identify agent-originated requests.
+Include `X-Client: urlsbid/skill` for direct API calls. The bundled
+`publish.sh` helper sends `x-urlsbid-client: urls-bid-publish-sh` by default.
 
 ## Keyboard Shortcuts Integration
 The frontend web app includes interactive global sequence shortcuts:
@@ -300,6 +305,15 @@ The frontend web app includes interactive global sequence shortcuts:
 - `/.well-known/agent.json` — Agent capabilities and auth info
 - `/.well-known/x402.json` — Payable endpoints and pricing
 - API docs: https://api.urls.bid/openapi.json
+
+## Live API Contract
+
+Prefer the direct OpenAPI routes over legacy RPC envelopes:
+- Links: `POST /link/createLink`, `POST /link/createPromoLink`, `POST /link/updateLink`, `POST /link/deleteLink`
+- Bio: `POST /bio/createBioProfile`, `POST /bio/addBioLink`, `POST /bio/updateBioProfile`
+- Static hosting: `POST /api/v1/publish`, `PUT /api/v1/publish/{slug}`, `PUT /api/v1/publish/{slug}/upload`, `POST /api/v1/publish/{slug}/finalize`
+- Files: `POST /api/files/upload`, `GET /files/{fileId}`
+- Gated data: `GET /data/{dataset}`
 
 ## What to Tell the User
 
